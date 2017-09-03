@@ -136,13 +136,12 @@ public class SXTree extends LinearLayout {
                     //刷新水平listView
                     List subData = mHAdapter.subList(0,position);
                     if(subData != null && subData.size() > 0){
-                        mHAdapter.removeAll();
-                        mHAdapter.addAll(subData);
+                        mHAdapter.setData(subData);
                         mHAdapter.notifyDataSetChanged();
                     }
 
                     //通知垂直列表刷新数据
-                    List data = mRefreshListener.refresh(parent, view, position, id);
+                    List data = mRefreshListener.refresh(parent, view, position, id,H_LISTVIEW);
                     if(data != null && data.size() > 0) {
                         mVAdapter.removeAll();
                         mVAdapter.addAll(data);
@@ -157,15 +156,16 @@ public class SXTree extends LinearLayout {
         mVerticalListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                List data = mRefreshListener.refresh(parent,view,position,id);
+                List data = mRefreshListener.refresh(parent,view,position,id,V_LISTVIEW);
 
                 //刷新垂直列表数据以及水平列表数据
                 if(data != null && data.size() > 0){
+                    Object value = mVAdapter.getItem(position);
                     mVAdapter.removeAll();
                     mVAdapter.addAll(data);
                     mVAdapter.notifyDataSetChanged();
 
-                    Object value = mVAdapter.getItem(position);
+
                     mHAdapter.add(value);
                     mHAdapter.notifyDataSetChanged();
                 }else{
@@ -176,6 +176,9 @@ public class SXTree extends LinearLayout {
         });
     }
 
+    public static final String H_LISTVIEW = "h_listView";
+    public static final String V_LISTVIEW = "v_listView";
+
     /**
      * 刷新数据的接口
      * */
@@ -183,7 +186,7 @@ public class SXTree extends LinearLayout {
         /**
          * 刷新数据的方法
          * */
-        List refresh(AdapterView<?> parent, View view, int position, long id);
+        List refresh(AdapterView<?> parent, View view, int position, long id,String tag);
     }
 
     /**

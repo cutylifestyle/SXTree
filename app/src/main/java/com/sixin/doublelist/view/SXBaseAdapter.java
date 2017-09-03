@@ -90,5 +90,13 @@ public abstract class SXBaseAdapter<T> extends BaseAdapter {
         return data;
     }
 
+    public List<T> getData(){
+        return mData;
+    }
+
+    public void setData(List<T> data){
+        mData = data;
+    }
+
 
 }
