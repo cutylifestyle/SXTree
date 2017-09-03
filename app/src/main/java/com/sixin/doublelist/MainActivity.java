@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-//        setListViewAdapter();
+        setListViewAdapter();
     }
 
     private void setListViewAdapter() {
