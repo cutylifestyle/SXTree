@@ -1,6 +1,7 @@
 package com.sixin.doublelist.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
+import com.sixin.doublelist.R;
 
 import java.util.List;
 
@@ -19,7 +22,7 @@ public class SXTree extends LinearLayout {
     // TODO: 2017/9/2 提供一个接口，对水平ListView以及垂直listView进行属性设置
     private static final String TAG = SXTree.class.getName();
 
-    private static final int sDEFALUT_H_HEIGHT = 100;
+    private static final int S_DEFLAUT_H_HEIGHT = 100;
 
     /**
      * SXTree包含一个水平listView和一个垂直listView
@@ -43,18 +46,7 @@ public class SXTree extends LinearLayout {
     /**
      * 水平listView的高度,单位：像素px
      * */
-    private int hHeight = sDEFALUT_H_HEIGHT;
-
-    public int gethHeight() {
-        return hHeight;
-    }
-
-    /**
-     * @param hHeight 单位是dp
-     * */
-    public void sethHeight(int hHeight) {
-        this.hHeight = DensityUtil.dip2px(getContext(), hHeight);
-    }
+    private int hHeight;
 
     public SXTree(Context context) {
         super(context);
@@ -62,6 +54,10 @@ public class SXTree extends LinearLayout {
 
     public SXTree(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SXTree);
+        hHeight = a.getDimensionPixelSize(R.styleable.SXTree_hHeight, S_DEFLAUT_H_HEIGHT);
+        a.recycle();
 
         //设置布局方向
         setOrientation(VERTICAL);
@@ -141,7 +137,7 @@ public class SXTree extends LinearLayout {
                     }
 
                     //通知垂直列表刷新数据
-                    List data = mRefreshListener.refresh(parent, view, position, id,H_LISTVIEW);
+                    List data = mRefreshListener.refresh(parent, view, position, id,mHAdapter);
                     if(data != null && data.size() > 0) {
                         mVAdapter.removeAll();
                         mVAdapter.addAll(data);
@@ -156,7 +152,7 @@ public class SXTree extends LinearLayout {
         mVerticalListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                List data = mRefreshListener.refresh(parent,view,position,id,V_LISTVIEW);
+                List data = mRefreshListener.refresh(parent,view,position,id,mVAdapter);
 
                 //刷新垂直列表数据以及水平列表数据
                 if(data != null && data.size() > 0){
@@ -176,8 +172,7 @@ public class SXTree extends LinearLayout {
         });
     }
 
-    public static final String H_LISTVIEW = "h_listView";
-    public static final String V_LISTVIEW = "v_listView";
+
 
     /**
      * 刷新数据的接口
@@ -186,7 +181,7 @@ public class SXTree extends LinearLayout {
         /**
          * 刷新数据的方法
          * */
-        List refresh(AdapterView<?> parent, View view, int position, long id,String tag);
+        List refresh(AdapterView<?> parent, View view, int position, long id,SXBaseAdapter adapter);
     }
 
     /**
